@@ -24,7 +24,7 @@ print('pub_key:', pub_key.encode(True).hex())
 
 
 coins_mainnet = dict(
-    BITCOIN=dict(
+    BITCOIN=dict(  # same as bitcoindiamond
         ADDRTYPE_P2PKH=b'\x00',
         ADDRTYPE_P2SH=b'\x05',
         WITNESS_VERSION=0,
@@ -40,6 +40,10 @@ coins_mainnet = dict(
         ADDRTYPE_P2PKH=b'\x26',
         ADDRTYPE_P2SH=b'\x17',
         WITNESS_VERSION=0,
+    ),
+    DOGECOIN=dict(
+        ADDRTYPE_P2PKH=b'\x1e',
+        ADDRTYPE_P2SH=b'\x16',  # 9 or A
     ),
 )
 
@@ -60,6 +64,10 @@ coins_testnet = dict(
         ADDRTYPE_P2PKH=b'\x6f',
         ADDRTYPE_P2SH=b'\xc4',
         WITNESS_VERSION=0,
+    ),
+    DOGECOIN=dict(
+        ADDRTYPE_P2PKH=b'\x71',
+        ADDRTYPE_P2SH=b'\xc4',
     ),
 )
 
@@ -129,20 +137,25 @@ def p2pkh_address(coins):
 
 def p2wpkh_p2sh_address(coins):
     for coin, coin_conf in coins.items():
+        if coin_conf.get('WITNESS_VERSION', None) is None:
+            continue
         print(coin, '--------------------------------------------')
         print('P2WPKH-P2SH ADDRESS')
         pubkey_to_p2wpkh_p2sh(pub_key.encode(compressed=True),
-                              coin_conf.get('WITNESS_VERSION', 0),
+                              coin_conf.get('WITNESS_VERSION'),
                               coin_conf.get('ADDRTYPE_P2SH', b'\x05'))
 
 
 def p2wpkh_bech32_address(coins):
     for coin, coin_conf in coins.items():
+        if coin_conf.get('SEGWIT_HRP', None) is None:
+            continue
         print(coin, '--------------------------------------------')
         print('P2WPKH BECH32 ADDRESS')
         pubkey_to_bech32(pub_key.encode(compressed=True),
                               coin_conf.get('WITNESS_VERSION', 0),
-                              coin_conf.get('SEGWIT_HRP', 'bc'))
+                              coin_conf.get('SEGWIT_HRP'))
+
 
 def _prefix_expand(prefix):
     """Expand the prefix into values for checksum computation."""
@@ -158,6 +171,7 @@ def encode(prefix, kind, addr_hash):
     payload = bech32.convertbits(data, 8, 5)
     checksum = cashaddr._create_checksum(prefix, bytes(payload))
     return ''.join([bech32.CHARSET[d] for d in (bytes(payload) + checksum)])
+
 
 def encode_full(prefix, kind, addr_hash):
     """Encode a full cashaddr address, with prefix and separator."""
