@@ -45,6 +45,9 @@ coins_mainnet = dict(
         ADDRTYPE_P2PKH=b'\x1e',
         ADDRTYPE_P2SH=b'\x16',  # 9 or A
     ),
+    DASHCOIN=dict(
+        ADDRTYPE_P2PKH=b'\x4c',
+    ),
 )
 
 coins_testnet = dict(
@@ -69,6 +72,9 @@ coins_testnet = dict(
         ADDRTYPE_P2PKH=b'\x71',
         ADDRTYPE_P2SH=b'\xc4',
     ),
+    DASHCOIN=dict(
+        ADDRTYPE_P2PKH=b'\x8c',
+    ),
 )
 
 bitcoin_cash = dict(
@@ -82,6 +88,12 @@ bitcoin_cash = dict(
         PUBKEY_TYPE=0,
         SCRIPT_TYPE=1
     )
+)
+
+ripple = dict(
+    mainnet=dict(
+        ADDRTYPE_P2PKH=b'\x00',
+    ),
 )
 
 
@@ -109,6 +121,16 @@ def legacy_address(data, version_byte=b'\x00'):
     payload = version_byte + ripemd160_pub
     checksum = sha256(sha256(payload))[:4]
     address = base58.encode(payload + checksum)
+    print('address:', address)
+
+
+def xrp_legacy_address(data, version_byte=b'\x00'):
+    ripemd160_pub = hash160(data)
+    payload = version_byte + ripemd160_pub
+    checksum = sha256(sha256(payload))[:4]
+    xrp_base58 = base58
+    xrp_base58.ALPHABET = 'rpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65jkm8oFqi1tuvAxyz'
+    address = xrp_base58.encode(payload + checksum)
     print('address:', address)
 
 
@@ -195,4 +217,9 @@ if __name__ == '__main__':
                                        cash_info.get('PUBKEY_TYPE'),
                                        hash160(pub_key.encode(True)))
         print('cash address:', address)
+
+    for xrp, xrp_info in ripple.items():
+        print('RIPPLE', '---------------------------')
+        xrp_legacy_address(pub_key.encode(compressed=True),
+                           xrp_info.get('ADDRTYPE_P2PKH', b'\x00'))
 
