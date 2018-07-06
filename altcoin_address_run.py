@@ -45,6 +45,9 @@ coins_mainnet = dict(
         ADDRTYPE_P2PKH=b'\x1e',
         ADDRTYPE_P2SH=b'\x16',  # 9 or A
     ),
+    DASHCOIN=dict(
+        ADDRTYPE_P2PKH=b'\x4c',
+    ),
 )
 
 coins_testnet = dict(
@@ -68,6 +71,9 @@ coins_testnet = dict(
     DOGECOIN=dict(
         ADDRTYPE_P2PKH=b'\x71',
         ADDRTYPE_P2SH=b'\xc4',
+    ),
+    DASHCOIN=dict(
+        ADDRTYPE_P2PKH=b'\x8c',
     ),
 )
 
