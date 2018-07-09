@@ -45,15 +45,18 @@ coins_mainnet = dict(
         ADDRTYPE_P2PKH=b'\x1e',
         ADDRTYPE_P2SH=b'\x16',  # 9 or A
     ),
-    DASHCOIN=dict(
-        ADDRTYPE_P2PKH=b'\x4c',
-    ),
+<<<<<<< HEAD
     ZCASH=dict(
         ADDRTYPE_P2PKH=b'\x1c\xb8',
         ADDRTYPE_P2SH=b'\x1c\xbd',
         WITNESS_VERSION=0,
         SEGWIT_HRP='zs'
     )
+=======
+    DASHCOIN=dict(
+        ADDRTYPE_P2PKH=b'\x4c',
+    ),
+>>>>>>> ab795d467d187063b980e67d1456b05d973d35f2
 )
 
 coins_testnet = dict(
@@ -78,15 +81,18 @@ coins_testnet = dict(
         ADDRTYPE_P2PKH=b'\x71',
         ADDRTYPE_P2SH=b'\xc4',
     ),
-    DASHCOIN=dict(
-        ADDRTYPE_P2PKH=b'\x8c',
-    ),
+<<<<<<< HEAD
     ZCASH=dict(
         ADDRTYPE_P2PKH=b'\x1d\x25',
         ADDRTYPE_P2SH=b'\x1c\xba',
         WITNESS_VERSION=0,
         SEGWIT_HRP='ztestsapling'
     )
+=======
+    DASHCOIN=dict(
+        ADDRTYPE_P2PKH=b'\x8c',
+    ),
+>>>>>>> ab795d467d187063b980e67d1456b05d973d35f2
 )
 
 bitcoin_cash = dict(
@@ -142,7 +148,7 @@ def xrp_legacy_address(data, version_byte=b'\x00'):
     payload = version_byte + ripemd160_pub
     checksum = sha256(sha256(payload))[:4]
     xrp_base58 = base58
-    xrp_base58.ALPHABET = 'rpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65jkm8oFqi1tuvAxyz'  # xrp 地址编码唯一区别在于base58字母顺序不同
+    xrp_base58.ALPHABET = 'rpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65jkm8oFqi1tuvAxyz'
     address = xrp_base58.encode(payload + checksum)
     print('address:', address)
 
