@@ -45,6 +45,12 @@ coins_mainnet = dict(
         ADDRTYPE_P2PKH=b'\x1e',
         ADDRTYPE_P2SH=b'\x16',  # 9 or A
     ),
+    ZCASH=dict(
+        ADDRTYPE_P2PKH=b'\x1c\xb8',
+        ADDRTYPE_P2SH=b'\x1c\xbd',
+        WITNESS_VERSION=0,
+        SEGWIT_HRP='zs'
+    )
 )
 
 coins_testnet = dict(
@@ -69,6 +75,12 @@ coins_testnet = dict(
         ADDRTYPE_P2PKH=b'\x71',
         ADDRTYPE_P2SH=b'\xc4',
     ),
+    ZCASH=dict(
+        ADDRTYPE_P2PKH=b'\x1d\x25',
+        ADDRTYPE_P2SH=b'\x1c\xba',
+        WITNESS_VERSION=0,
+        SEGWIT_HRP='ztestsapling'
+    )
 )
 
 bitcoin_cash = dict(
@@ -88,9 +100,9 @@ bitcoin_cash = dict(
 def hash160(data):
     assert isinstance(data, bytes)
     hash256_data = sha256(data)
-    print('First hash256:', hash256_data.hex())
+    # print('First hash256:', hash256_data.hex())
     ripemd160_data = ripemd160(hash256_data)
-    print('Sencond hash160:', ripemd160_data.hex())
+    # print('Sencond hash160:', ripemd160_data.hex())
     return ripemd160_data
 
 
@@ -109,7 +121,8 @@ def legacy_address(data, version_byte=b'\x00'):
     payload = version_byte + ripemd160_pub
     checksum = sha256(sha256(payload))[:4]
     address = base58.encode(payload + checksum)
-    print('address:', address)
+    # print('address:', address)
+    return address
 
 
 def pubkey_to_p2wpkh_p2sh(pubkey, witness_version, version_byte=b'\x00'):
@@ -157,19 +170,11 @@ def p2wpkh_bech32_address(coins):
                               coin_conf.get('SEGWIT_HRP'))
 
 
-def _prefix_expand(prefix):
-    """Expand the prefix into values for checksum computation."""
-    retval = bytearray(ord(x) & 0x1f for x in prefix)
-    # Append null separator
-    retval.append(0)
-    return retval
-
-
 def encode(prefix, kind, addr_hash):
     """Encode a cashaddr address without prefix and separator."""
     data = bytes([kind << 3]) + addr_hash
     payload = bech32.convertbits(data, 8, 5)
-    checksum = cashaddr._create_checksum(prefix, bytes(payload))
+    checksum = cashaddr._create_checksum(prefix, bytes(payload))  # btc的bech32和bch的格式唯一区别在这里
     return ''.join([bech32.CHARSET[d] for d in (bytes(payload) + checksum)])
 
 
